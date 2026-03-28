@@ -12,22 +12,34 @@ const slugify = require("../utils/slugify");
 const seed = async () => {
   await connectDB();
 
-  let admin = await User.findOne({ email: "admin@example.com" }).select("+password");
-  if (!admin) {
-    admin = new User({
-      fullName: "System Admin",
-      email: "admin@example.com",
-      phone: "0900000000",
-      password: "123456",
-      role: "admin",
-    });
-  } else {
-    admin.fullName = "System Admin";
-    admin.phone = "0900000000";
-    admin.role = "admin";
-    admin.password = "123456";
+  const adminEmail = process.env.SEED_ADMIN_EMAIL
+    ? process.env.SEED_ADMIN_EMAIL.toLowerCase()
+    : "";
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || "";
+  const adminPhone = process.env.SEED_ADMIN_PHONE || undefined;
+  const adminFullName = process.env.SEED_ADMIN_FULL_NAME || "System Admin";
+
+  let admin = null;
+  if (adminEmail && adminPassword) {
+    admin = await User.findOne({ email: adminEmail }).select("+password");
+    if (!admin) {
+      admin = new User({
+        fullName: adminFullName,
+        email: adminEmail,
+        phone: adminPhone,
+        password: adminPassword,
+        role: "admin",
+      });
+    } else {
+      admin.fullName = adminFullName;
+      admin.email = adminEmail;
+      admin.phone = adminPhone;
+      admin.role = "admin";
+      admin.password = adminPassword;
+    }
+
+    await admin.save();
   }
-  await admin.save();
 
   const brand = await Brand.findOneAndUpdate(
     { slug: "apple" },
@@ -107,10 +119,16 @@ const seed = async () => {
   );
 
   console.log("Seed completed");
-  console.log("Admin login:", {
-    email: admin.email,
-    password: "123456",
-  });
+  if (admin) {
+    console.log("Admin account seeded:", {
+      email: admin.email,
+      phone: admin.phone,
+    });
+  } else {
+    console.log(
+      "Admin seed skipped. Set SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD in .env to create an admin account."
+    );
+  }
 
   process.exit(0);
 };

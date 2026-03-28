@@ -108,6 +108,9 @@ const socialLogin = asyncHandler(async (req, res) => {
 
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email, phone } = req.body;
+  const exposeResetTokenForTesting =
+    process.env.EXPOSE_RESET_TOKEN_FOR_TESTING === "true" &&
+    process.env.NODE_ENV !== "production";
 
   if (!email && !phone) {
     throw new ApiError(400, "email or phone is required");
@@ -121,21 +124,24 @@ const forgotPassword = asyncHandler(async (req, res) => {
     "+passwordResetToken +passwordResetExpires"
   );
 
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
+  let debugData;
 
-  const resetToken = user.generateResetPasswordToken();
-  await user.save({ validateBeforeSave: false });
+  if (user) {
+    const resetToken = user.generateResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    if (exposeResetTokenForTesting) {
+      debugData = {
+        resetToken,
+        expiresAt: user.passwordResetExpires,
+      };
+    }
+  }
 
   res.json({
     success: true,
-    message: "Reset password token generated",
-    data: {
-      resetToken,
-      expiresAt: user.passwordResetExpires,
-      note: "Project demo tra ve token de ban test API. Khi len production hay gui qua email/SMS.",
-    },
+    message: "If the account exists, password reset instructions have been generated",
+    ...(debugData ? { data: debugData } : {}),
   });
 });
 

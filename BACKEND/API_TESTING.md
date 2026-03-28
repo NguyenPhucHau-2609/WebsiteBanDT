@@ -56,8 +56,17 @@ Expected result:
 
 ## 5. Seed admin account
 
-- Email: `admin@example.com`
-- Password: `123456`
+Tai khoan admin khong con duoc hardcode trong source.
+
+Truoc khi chay `npm run seed`, them vao `.env`:
+
+```env
+SEED_ADMIN_EMAIL=admin@example.com
+SEED_ADMIN_PHONE=0900000000
+SEED_ADMIN_PASSWORD=doi-mat-khau-admin-manh-hon
+```
+
+Sau do moi thuc hien login admin bang thong tin ban vua dat.
 
 ## 6. Test flow for customer APIs
 
@@ -234,7 +243,7 @@ Invoke-RestMethod -Method Post -Uri "http://localhost:5000/api/support" `
 ```powershell
 $body = @{
   emailOrPhone = "admin@example.com"
-  password = "123456"
+  password = "doi-mat-khau-admin-manh-hon"
 } | ConvertTo-Json
 
 $adminLogin = Invoke-RestMethod -Method Post -Uri "http://localhost:5000/api/auth/login" `
@@ -350,3 +359,8 @@ If port 5000 is busy, change `PORT` in `.env`, for example:
 ```env
 PORT=5001
 ```
+
+## 11. Forgot password testing
+
+- `POST /api/auth/forgot-password` mac dinh chi tra thong bao chung, khong tra raw reset token.
+- Neu can debug local, dat `EXPOSE_RESET_TOKEN_FOR_TESTING=true` trong `.env` roi goi lai endpoint.

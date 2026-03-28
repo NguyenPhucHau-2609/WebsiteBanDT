@@ -1,13 +1,13 @@
 ### Health check
 GET http://localhost:5000/api/health
 
-### Login admin seed
+### Login admin (set SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD before running npm run seed)
 POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
   "emailOrPhone": "admin@example.com",
-  "password": "123456"
+  "password": "your-seed-admin-password"
 }
 
 ### Register customer

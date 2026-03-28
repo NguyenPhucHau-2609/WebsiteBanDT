@@ -39,6 +39,11 @@ npm run dev
 - `JWT_SECRET`: Khoa ky JWT
 - `JWT_EXPIRES_IN`: Thoi han token
 - `CLIENT_URL`: URL frontend
+- `EXPOSE_RESET_TOKEN_FOR_TESTING`: Chi bat khi can debug local, mac dinh khong tra reset token qua API
+- `SEED_ADMIN_FULL_NAME`: Ten admin seed
+- `SEED_ADMIN_EMAIL`: Email admin seed
+- `SEED_ADMIN_PHONE`: So dien thoai admin seed
+- `SEED_ADMIN_PASSWORD`: Mat khau admin seed
 
 ## Route goc
 
@@ -52,4 +57,5 @@ npm run dev
 ## Ghi chu
 
 - Tich hop `VNPay`, `MoMo`, `Google`, `Facebook` trong project nay duoc mo phong o muc backend logic de ban de noi frontend va nang cap sau.
-- Neu can du lieu mau, ban co the viet them script seed duoi `src/scripts/seed.js`.
+- `npm run seed` van seed du lieu mau ve san pham, danh muc, voucher. Tai khoan admin chi duoc tao khi ban dien `SEED_ADMIN_EMAIL` va `SEED_ADMIN_PASSWORD` trong `.env`.
+- Endpoint quen mat khau khong tra raw reset token qua API. Neu can test local, ban co the bat `EXPOSE_RESET_TOKEN_FOR_TESTING=true`.
